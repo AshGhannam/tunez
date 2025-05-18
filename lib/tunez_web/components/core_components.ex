@@ -63,8 +63,7 @@ defmodule TunezWeb.CoreComponents do
           :if={@kind == :error}
           name="hero-exclamation-circle-mini"
           class="w-6 h-6 text-error-600"
-        />
-        <.icon :if={@kind == :info} name="hero-check-circle-mini" class="w-6 h-6 text-green-600" />
+        /> <.icon :if={@kind == :info} name="hero-check-circle-mini" class="w-6 h-6 text-green-600" />
         <.icon
           :if={@kind == :warning}
           name="hero-exclamation-circle-mini"
@@ -72,8 +71,10 @@ defmodule TunezWeb.CoreComponents do
         />
         <div>
           <p :if={@title} class="font-semibold text-sm">{@title}</p>
+
           <p class="text-sm">{msg}</p>
         </div>
+
         <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
           <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
         </button>
@@ -95,8 +96,7 @@ defmodule TunezWeb.CoreComponents do
   def flash_group(assigns) do
     ~H"""
     <div id={@id} class="fixed top-4 right-4 space-y-2 z-50">
-      <.flash kind={:info} flash={@flash} />
-      <.flash kind={:error} flash={@flash} />
+      <.flash kind={:info} flash={@flash} /> <.flash kind={:error} flash={@flash} />
       <.flash kind={:warning} flash={@flash} />
       <.flash
         id="client-error"
@@ -373,9 +373,9 @@ defmodule TunezWeb.CoreComponents do
           checked={@checked}
           class={[form_input_styles(), @class]}
           {@rest}
-        />
-        {@label}
+        /> {@label}
       </label>
+
       <.error :for={msg <- @errors}>{msg}</.error>
     </.form_control>
     """
@@ -385,10 +385,12 @@ defmodule TunezWeb.CoreComponents do
     ~H"""
     <.form_control class={@container_class} errors={@errors}>
       <.label for={@id}>{@label}</.label>
+
       <select id={@id} name={@name} class={[form_input_styles(), @class]} multiple={@multiple} {@rest}>
         <option :if={@prompt} value="">{@prompt}</option>
         {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
+
       <.error :for={msg <- @errors}>{msg}</.error>
     </.form_control>
     """
@@ -409,6 +411,7 @@ defmodule TunezWeb.CoreComponents do
     ~H"""
     <.form_control class={@container_class} errors={@errors}>
       <.label for={@id}>{@label}</.label>
+
       <input
         type={@type}
         name={@name}
@@ -466,8 +469,9 @@ defmodule TunezWeb.CoreComponents do
   def error(assigns) do
     ~H"""
     <p class="mt-1.5 flex gap-1.5 text-sm leading-6 text-error-600 items-center">
-      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
-      {render_slot(@inner_block)}
+      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" /> {render_slot(
+        @inner_block
+      )}
     </p>
     """
   end
@@ -500,6 +504,7 @@ defmodule TunezWeb.CoreComponents do
           {render_slot(@subtitle)}
         </p>
       </div>
+
       <div
         :if={@action != []}
         class={[
@@ -517,6 +522,7 @@ defmodule TunezWeb.CoreComponents do
         >
           <.icon name="hero-chevron-double-down w-4 h-4" />
         </div>
+
         <div
           id={@dropdown_id}
           tabindex="0"

@@ -45,31 +45,31 @@ defmodule TunezWeb.Artists.IndexLive do
     <Layouts.app {assigns}>
       <.header responsive={false}>
         <.h1>Artists</.h1>
-        
+
         <:action><.sort_changer selected={@sort_by} /></:action>
-        
+
         <:action>
           <.search_box query={@query_text} method="get" data-role="artist-search" phx-submit="search" />
         </:action>
-        
+
         <:action>
           <.button_link navigate={~p"/artists/new"} kind="primary">
             New Artist
           </.button_link>
         </:action>
       </.header>
-      
+
       <div :if={@page.results == []} class="p-8 text-center">
         <.icon name="hero-face-frown" class="w-32 h-32 bg-gray-300" /> <br />
         No artist data to display!
       </div>
-      
+
       <ul class="gap-6 lg:gap-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         <li :for={artist <- @page.results}>
           <.artist_card artist={artist} />
         </li>
       </ul>
-       <.pagination_links page={@page} query_text={@query_text} sort_by={@sort_by} />
+      <.pagination_links page={@page} query_text={@query_text} sort_by={@sort_by} />
     </Layouts.app>
     """
   end
@@ -91,7 +91,7 @@ defmodule TunezWeb.Artists.IndexLive do
         {@artist.name}
       </.link>
     </p>
-     <.artist_card_album_info artist={@artist} />
+    <.artist_card_album_info artist={@artist} />
     """
   end
 
@@ -142,7 +142,7 @@ defmodule TunezWeb.Artists.IndexLive do
       >
         « Previous
       </.button_link>
-      
+
       <.button_link
         data-role="next-page"
         kind="primary"

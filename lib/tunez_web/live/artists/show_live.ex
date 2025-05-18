@@ -48,11 +48,11 @@ defmodule TunezWeb.Artists.ShowLive do
         <.h1>
           {@artist.name}
         </.h1>
-        
+
         <:subtitle :if={@artist.previous_names != []}>
           formerly known as: {Enum.join(@artist.previous_names, ", ")}
         </:subtitle>
-        
+
         <:action>
           <.button_link
             kind="error"
@@ -63,20 +63,20 @@ defmodule TunezWeb.Artists.ShowLive do
             Delete Artist
           </.button_link>
         </:action>
-        
+
         <:action>
           <.button_link navigate={~p"/artists/#{@artist.id}/edit"} kind="primary" inverse>
             Edit Artist
           </.button_link>
         </:action>
       </.header>
-      
+
       <div class="mb-6">{formatted(@artist.biography)}</div>
-      
+
       <.button_link navigate={~p"/artists/#{@artist.id}/albums/new"} kind="primary">
         New Album
       </.button_link>
-      
+
       <ul class="mt-10 space-y-6 md:space-y-10">
         <%!-- <li :for={album <- @albums}> --%>
         <li :for={album <- @artist.albums}>
@@ -93,13 +93,13 @@ defmodule TunezWeb.Artists.ShowLive do
       <div class="mx-auto mb-6 md:mb-0 w-2/3 md:w-72 lg:w-96">
         <.cover_image image={@album.cover_image_url} />
       </div>
-      
+
       <div class="flex-1">
         <.header class="pl-3 pr-2 !m-0">
           <.h2>
             {@album.name} ({@album.year_released})
           </.h2>
-          
+
           <:action>
             <.button_link
               size="sm"
@@ -112,14 +112,14 @@ defmodule TunezWeb.Artists.ShowLive do
               Delete
             </.button_link>
           </:action>
-          
+
           <:action>
             <.button_link size="sm" kind="primary" inverse navigate={~p"/albums/#{@album.id}/edit"}>
               Edit
             </.button_link>
           </:action>
         </.header>
-         <.track_details tracks={[]} />
+        <.track_details tracks={[]} />
       </div>
     </div>
     """
@@ -132,9 +132,9 @@ defmodule TunezWeb.Artists.ShowLive do
         <th class="whitespace-nowrap w-1 p-3">
           {String.pad_leading("#{track.order}", 2, "0")}.
         </th>
-        
+
         <td class="p-3">{track.name}</td>
-        
+
         <td class="whitespace-nowrap w-1 text-right p-2">{track.duration_seconds}</td>
       </tr>
     </table>

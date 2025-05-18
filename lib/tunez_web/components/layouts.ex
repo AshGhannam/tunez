@@ -27,11 +27,11 @@ defmodule TunezWeb.Layouts do
             </span>
           </.link>
         </div>
+        <.user_info current_user={@current_user} socket={@socket} />
       </div>
-      <div class="px-4">
-        <.flash_group flash={@flash} />
 
-        {render_slot(@inner_block)}
+      <div class="px-4">
+        <.flash_group flash={@flash} /> {render_slot(@inner_block)}
       </div>
     </div>
     """
@@ -42,7 +42,6 @@ defmodule TunezWeb.Layouts do
     <div class="flex space-x-3 relative items-center">
       <%= if @current_user do %>
         {live_render(@socket, TunezWeb.NotificationsLive, sticky: true, id: :notifications_container)}
-
         <div class="!ml-8">
           <div
             tabindex="0"
@@ -53,6 +52,7 @@ defmodule TunezWeb.Layouts do
           >
             <.avatar user={@current_user} />
           </div>
+
           <ul
             id="user-menu"
             tabindex="0"
@@ -63,6 +63,7 @@ defmodule TunezWeb.Layouts do
                 Signed in as <strong class="whitespace-nowrap">{@current_user.email}</strong>
               </p>
             </li>
+
             <li class="p-2 pb-0"><.link navigate="/sign-out" class="block">Sign out</.link></li>
           </ul>
         </div>

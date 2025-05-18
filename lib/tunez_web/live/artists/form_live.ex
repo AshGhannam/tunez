@@ -31,7 +31,7 @@ defmodule TunezWeb.Artists.FormLive do
       <.header>
         <.h1>{@page_title}</.h1>
       </.header>
-      
+
       <.simple_form
         :let={form}
         id="artist_form"

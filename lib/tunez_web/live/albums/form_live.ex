@@ -38,7 +38,7 @@ defmodule TunezWeb.Albums.FormLive do
       <.header>
         <.h1>{@page_title}</.h1>
       </.header>
-      
+
       <.simple_form
         :let={form}
         id="album_form"
@@ -50,12 +50,12 @@ defmodule TunezWeb.Albums.FormLive do
         <.input name="artist_id" label="Artist" value={@artist.name} disabled />
         <div class="sm:flex gap-8 space-y-8 md:space-y-0">
           <div class="sm:w-3/4"><.input field={form[:name]} label="Name" /></div>
-          
+
           <div class="sm:w-1/4">
             <.input field={form[:year_released]} label="Year Released" type="number" />
           </div>
         </div>
-         <.input field={form[:cover_image_url]} label="Cover Image URL" />
+        <.input field={form[:cover_image_url]} label="Cover Image URL" />
         <:actions>
           <.button type="primary">Save</.button>
         </:actions>
@@ -72,30 +72,30 @@ defmodule TunezWeb.Albums.FormLive do
       <thead class="border-b border-zinc-100">
         <tr>
           <th class=""></th>
-          
+
           <th class="text-left font-medium text-sm pb-1 px-3">Name</th>
-          
+
           <th class="text-left font-medium text-sm pb-1 px-3" colspan="2">Duration</th>
         </tr>
       </thead>
-      
+
       <tbody phx-hook="trackSort" id="trackSort">
         <.inputs_for :let={track_form} field={@form[:tracks]}>
           <tr data-id={track_form.index}>
             <td class="px-3 w-20">
               <.input field={track_form[:order]} type="number" />
             </td>
-            
+
             <td class="px-3">
               <label for={track_form[:name].id} class="hidden">Name</label>
               <.input field={track_form[:name]} />
             </td>
-            
+
             <td class="px-3 w-36">
               <label for={track_form[:duration_seconds].id} class="hidden">Duration</label>
               <.input field={track_form[:duration_seconds]} />
             </td>
-            
+
             <td class="w-12">
               <.button_link
                 phx-click="remove-track"
