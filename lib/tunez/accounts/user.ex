@@ -4,7 +4,7 @@ defmodule Tunez.Accounts.User do
     domain: Tunez.Accounts,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshJsonApi.Resource, AshAuthentication]
+    extensions: [AshGraphql.Resource, AshJsonApi.Resource, AshAuthentication]
 
   authentication do
     add_ons do
@@ -53,6 +53,10 @@ defmodule Tunez.Accounts.User do
     end
   end
 
+  graphql do
+    type :user
+  end
+
   json_api do
     type "user"
   end
@@ -64,6 +68,10 @@ defmodule Tunez.Accounts.User do
 
   actions do
     defaults [:read]
+
+    update :set_role do
+      accept [:role]
+    end
 
     read :get_by_subject do
       description "Get a user by the subject claim in a JWT"
@@ -272,8 +280,15 @@ defmodule Tunez.Accounts.User do
       authorize_if always()
     end
 
-    policy always() do
-      forbid_if always()
+    # policy always() do
+    #   forbid_if always()
+    # end
+    policy action([:register_with_password, :sign_in_with_password]) do
+      authorize_if always()
+    end
+
+    policy action(:read) do
+      authorize_if expr(id == ^actor(:id))
     end
   end
 
@@ -290,6 +305,12 @@ defmodule Tunez.Accounts.User do
     end
 
     attribute :confirmed_at, :utc_datetime_usec
+
+    attribute :role, Tunez.Accounts.Role do
+      allow_nil? false
+      default :user
+      # constraints one_of: [:admin, :editor, :user]
+    end
   end
 
   identities do
