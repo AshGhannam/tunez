@@ -3,7 +3,10 @@ defmodule TunezWeb.Albums.FormLive do
 
   def mount(%{"id" => album_id}, _session, socket) do
     album =
-      Tunez.Music.get_album_by_id!(album_id, load: [:artist], actor: socket.assigns.current_user)
+      Tunez.Music.get_album_by_id!(album_id,
+        load: [:artist, :tracks],
+        actor: socket.assigns.current_user
+      )
 
     # album = Tunez.Music.get_album_by_id!(album_id)
     # artist = Tunez.Music.get_artist_by_id!(album.artist_id)
@@ -64,6 +67,7 @@ defmodule TunezWeb.Albums.FormLive do
           </div>
         </div>
         <.input field={form[:cover_image_url]} label="Cover Image URL" />
+        <.track_inputs form={form} />
         <:actions>
           <.button type="primary">Save</.button>
         </:actions>
@@ -72,6 +76,62 @@ defmodule TunezWeb.Albums.FormLive do
     """
   end
 
+  # def track_inputs(assigns) do
+  #   ~H"""
+  #   <.h2>Tracks</.h2>
+
+  #   <table class="w-full">
+  #     <thead class="border-b border-zinc-100">
+  #       <tr>
+  #         <th class=""></th>
+
+  #         <th class="text-left font-medium text-sm pb-1 px-3">Name</th>
+
+  #         <th class="text-left font-medium text-sm pb-1 px-3" colspan="2">Duration</th>
+  #       </tr>
+  #     </thead>
+
+  #     <tbody phx-hook="trackSort" id="trackSort">
+  #       <.inputs_for :let={track_form} field={@form[:tracks]}>
+  #         <tr data-id={track_form.index}>
+  #           <%!-- <td class="px-3 w-20"> --%>
+  #           <td class="px-3 w-10">
+  #             <span class="hero-bars-3 handle cursor-pointer" />
+  #             <%!-- <.input field={track_form[:order]} type="number" /> --%>
+  #           </td>
+
+  #           <td class="px-3">
+  #             <label for={track_form[:name].id} class="hidden">Name</label>
+  #             <.input field={track_form[:name]} />
+  #           </td>
+
+  #           <td class="px-3 w-36">
+  #             <label for={track_form[:duration_seconds].id} class="hidden">Duration</label>
+  #             <.input field={track_form[:duration_seconds]} />
+  #           </td>
+
+  #           <td class="w-12">
+  #             <.button_link
+  #               phx-click="remove-track"
+  #               phx-value-path={track_form.name}
+  #               kind="error"
+  #               size="xs"
+  #               inverse
+  #             >
+  #               <%!-- <.button_link phx-click="remove-track" phx-value-path={track_form.name} kind="error" size="xs" inverse > --%>
+  #               <span class="hidden">Delete</span> <.icon name="hero-trash" class="size-5" />
+  #             </.button_link>
+  #           </td>
+  #         </tr>
+  #       </.inputs_for>
+  #     </tbody>
+  #   </table>
+
+  #   <.button_link phx-click="add-track" kind="primary" size="sm" inverse>
+  #     Add Track
+  #   </.button_link>
+  #   """
+  # end
   def track_inputs(assigns) do
     ~H"""
     <.h2>Tracks</.h2>
@@ -80,30 +140,24 @@ defmodule TunezWeb.Albums.FormLive do
       <thead class="border-b border-zinc-100">
         <tr>
           <th class=""></th>
-
           <th class="text-left font-medium text-sm pb-1 px-3">Name</th>
-
           <th class="text-left font-medium text-sm pb-1 px-3" colspan="2">Duration</th>
         </tr>
       </thead>
-
       <tbody phx-hook="trackSort" id="trackSort">
         <.inputs_for :let={track_form} field={@form[:tracks]}>
           <tr data-id={track_form.index}>
-            <td class="px-3 w-20">
-              <.input field={track_form[:order]} type="number" />
+            <td class="px-3 w-10">
+              <span class="hero-bars-3 handle cursor-pointer" />
             </td>
-
             <td class="px-3">
               <label for={track_form[:name].id} class="hidden">Name</label>
               <.input field={track_form[:name]} />
             </td>
-
             <td class="px-3 w-36">
-              <label for={track_form[:duration_seconds].id} class="hidden">Duration</label>
-              <.input field={track_form[:duration_seconds]} />
+              <label for={track_form[:duration].id} class="hidden">Duration</label>
+              <.input field={track_form[:duration]} />
             </td>
-
             <td class="w-12">
               <.button_link
                 phx-click="remove-track"
@@ -112,7 +166,8 @@ defmodule TunezWeb.Albums.FormLive do
                 size="xs"
                 inverse
               >
-                <span class="hidden">Delete</span> <.icon name="hero-trash" class="size-5" />
+                <span class="hidden">Delete</span>
+                <.icon name="hero-trash" class="size-5" />
               </.button_link>
             </td>
           </tr>
@@ -159,14 +214,32 @@ defmodule TunezWeb.Albums.FormLive do
   end
 
   def handle_event("add-track", _params, socket) do
+    socket =
+      update(socket, :form, fn form ->
+        # AshPhoenix.Form.add_form(form, :tracks)
+        order = length(AshPhoenix.Form.value(form, :tracks) || []) + 1
+        AshPhoenix.Form.add_form(form, :tracks, params: %{order: order})
+      end)
+
     {:noreply, socket}
   end
 
-  def handle_event("remove-track", %{"path" => _path}, socket) do
+  # def handle_event("remove-track", %{"path" => _path}, socket) do
+  def handle_event("remove-track", %{"path" => path}, socket) do
+    socket =
+      update(socket, :form, fn form ->
+        AshPhoenix.Form.remove_form(form, path)
+      end)
+
     {:noreply, socket}
   end
 
-  def handle_event("reorder-tracks", %{"order" => _order}, socket) do
+  def handle_event("reorder-tracks", %{"order" => order}, socket) do
+    socket =
+      update(socket, :form, fn form ->
+        AshPhoenix.Form.sort_forms(form, [:tracks], order)
+      end)
+
     {:noreply, socket}
   end
 end
