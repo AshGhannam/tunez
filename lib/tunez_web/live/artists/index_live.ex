@@ -82,6 +82,7 @@ defmodule TunezWeb.Artists.IndexLive do
     ~H"""
     <div id={"artist-#{@artist.id}"} data-role="artist-card" class="relative mb-2">
       <.link navigate={~p"/artists/#{@artist.id}"}>
+        <.follow_icon :if={@artist.followed_by_me} />
         <.cover_image image={@artist.cover_image_url} />
       </.link>
     </div>
@@ -93,6 +94,7 @@ defmodule TunezWeb.Artists.IndexLive do
         data-role="artist-name"
       >
         {@artist.name}
+        <.follower_count_display count={@artist.follower_count} />
       </.link>
     </p>
     <.artist_card_album_info artist={@artist} />
@@ -214,7 +216,9 @@ defmodule TunezWeb.Artists.IndexLive do
       {"recently added", "-inserted_at"},
       {"name", "name"},
       {"number of albums", "-album_count"},
-      {"latest album release", "--latest_album_year_released"}
+      {"latest album release", "--latest_album_year_released"},
+      {"popularity", "-follower_count"},
+      {"followed artists first", "-followed_by_me"}
     ]
   end
 

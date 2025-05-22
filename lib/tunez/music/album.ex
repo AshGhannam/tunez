@@ -12,6 +12,7 @@ defmodule Tunez.Music.Album do
 
   json_api do
     type "album"
+    includes [:tracks]
   end
 
   postgres do
@@ -121,6 +122,7 @@ defmodule Tunez.Music.Album do
 
     has_many :tracks, Tunez.Music.Track do
       sort order: :asc
+      public? true
     end
   end
 
@@ -129,7 +131,10 @@ defmodule Tunez.Music.Album do
   calculations do
     calculate :years_ago, :integer, expr(2025 - year_released)
 
-    calculate :duration, :string, Tunez.Music.Calculations.SecondsToMinutes
+    calculate :duration, :string, Tunez.Music.Calculations.SecondsToMinutes do
+      # allow_nil? false
+      public? true
+    end
 
     calculate :string_years_ago,
               :string,

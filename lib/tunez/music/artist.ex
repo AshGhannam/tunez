@@ -20,7 +20,8 @@ defmodule Tunez.Music.Artist do
 
   json_api do
     type "artist"
-    includes [:albums]
+    # includes [:albums]
+    includes albums: [:tracks]
     derive_filter? false
   end
 
@@ -144,6 +145,14 @@ defmodule Tunez.Music.Artist do
       public? true
     end
 
+    has_many :follower_relationships, Tunez.Music.ArtistFollower
+
+    many_to_many :followers, Tunez.Accounts.User do
+      # through Tunez.Music.ArtistFollower
+      join_relationship :follower_relationships
+      destination_attribute_on_join_resource :follower_id
+    end
+
     belongs_to :created_by, Tunez.Accounts.User
     belongs_to :updated_by, Tunez.Accounts.User
   end
@@ -152,11 +161,20 @@ defmodule Tunez.Music.Artist do
     # calculate :album_count, :integer, expr(count(albums))
     # calculate :latest_album_year_released, :integer, expr(first(albums, field: :year_released))
     # calculate :cover_image_url, :string, expr(first(albums, field: :cover_image_url))
+    calculate :followed_by_me,
+              :boolean,
+              expr(exists(follower_relationships, follower_id == ^actor(:id))) do
+      public? true
+    end
   end
 
   aggregates do
     # calculate :album_count, :integer, expr(count(albums))
     count :album_count, :albums do
+      public? true
+    end
+
+    count :follower_count, :follower_relationships do
       public? true
     end
 
